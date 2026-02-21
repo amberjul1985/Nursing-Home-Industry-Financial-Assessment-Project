@@ -1,3 +1,6 @@
+**NURSING HOME INDUSTRY FINANCIAL ASSESSMENT**
+Julian Amberg, Jeffrey Brown, Diana Manukyan
+
 **Executive Summary**
 
 Upon analyzing the nursing home industry, our team performed a variety of analytical tests and prediction models, including OLS Regression, Random Forest Analysis, Logistic Regression, as well as Lasso, Ridge, and Elastic Analysis, to better assess its financial capabilities and the quality of its services.
