@@ -34,7 +34,7 @@ Data from several federal reporting systems is compiled by different sources, in
 
 The datasets utilized were in CSV format, arranged by year and data type, and covered the years 2015–2021. To ensure consistency across sources and years, we downloaded the data, combined and cleaned the datasets, about which we will talk in more detail in the next sections. The facility-level analysis of all datasets allowed for reliable cross-temporal and cross-geographic comparisons.
 
-Data Analysis Techniques 
+**Data Analysis Techniques**
 
 Firstly, after looking at all of the yearly datasets, we merged them into unified datasets to make the working process easier. After that, we implemented the following methods of data analysis:
 
@@ -88,27 +88,27 @@ All remaining files provided concerning provider information (including the CSV 
 
 Each CSV, much like the cost reports, was divided into the previously mentioned categories and then by year. Our team, prior to performing any processing, assessed the dictionaries for the datasets and determined which columns within each were of interest and worth keeping.
 
-Provider Information
+**Provider Information**
 
 The first step in processing the data collection was inserting a column in each CSV with the year of the file (ex, ProviderInfo_2015.CSV has a new column, [Year] with data value = “2015”). It was also noted that the COVID-19 years, 2020-2021, had more columns and different names for parallel columns. The next step was to adjust the column titles so that the formatting was consistent for both coding and data preparation (in this case, selecting columns with desired data) purposes; the new columns of the COVID-19 years CSV files would be addressed later. It was decided that in order to properly measure the potential differences between the pre-COVID-19 years CSV files and the COVID-19 years CSV files, any collation needed to first produce two files for separate analysis (one for the range 2015-2019 and the other for the range 2020-2021) for each category. With all the categories collated around the year range, the next step was to select and begin modifying the base file, the anchor to which the other files would join when merging.
 
 The CSV files for Provider Information were the perfect candidate(s) for the base file, setting the primary keys for all the data sets as provider federal number [Provnum] and year of the instance [Year]. The first task was to select the previously determined relevant columns to keep. The next step was an assessment to find any null values and determine the distributions of the columns, if it was necessary to fill the nulls. Upon viewing the nulls reports, and in proportion to the total size of the data sets, a maximum of 3016 nulls (3.87%) within a total of 78025 data values in the PreCOVID-19 files and a maximum of 4545 nulls (14.85%) within a total of 30612 data values in the COVID-19 files being removed would not disrupt the distributions of the existing columns. IQR was also applied to all numeric values to reduce the number of outliers in the data, which brought down the data value counts to 32779 and 11033, respectively. This reduction of data values in the interim is recognized as being meaningfully substantive and potentially a problem for properly assessing the ability of the data set to properly reflect information about the providers. This deduction is important because while the distributions were more or less normalized, any risk of outliers reducing the effectiveness of the model must be reduced. Later on, before the completion of the data preparation, more instances will be added as means to cover for missing information.
 
-Deficiencies
+**Deficiencies**
 
 The next datasets to prepare were the Deficiencies. which marks the type of citations a provider will receive for issues that the provider will have (i.e., fire safety, health procedures, health inspection failures, etc.). This dataset does have a collection of data that might be important if assessing the capabilities and efficacy of a particular provider, however, for our team’s purposes, there is a need for reduction. Functionally, an investor at this point in time trying to better understand the industry only needs to understand how many times this is an occurrence and if the quantity of these citations has been increasing over time. That is why it was decided to create a new column [DeficiencyCount], which aggregated the number of times a deficiency occurred for a provider within a year. This was performed via a loop that used [deficiency tag] to form the counts. What remained was the composite primary key and [DeficiencyCount]. This was then inner-joined with the previous provider info dataset, producing a new base file. When merging, the data types for the composite keys need to match, and so they are casted as strings while the merge occurs.
 
-Quality Measurement
+**Quality Measurement**
 
 Centers for Medicare & Medicaid Services (CMS) performs an assessment of each provider every year and calculates their measure scores and determines the measure average. Measures are incidents of note, both positive and negative, that occur and are reported during a year. Amongst the variables within the dataset, the most important are the measure descriptions/code, the stay type, the measure scores, and the measure average.
 
 There are multiple instances a provider can have per year, and CMS measures each of them. Given the way we wanted to structure our dataset with the composite keys and how we wanted to conduct analysis, the number of rows had to be reduced so that there was only one instance per provider per year. The way to do this was by means of consolidating, in particular, combining both [stay_type] and [measure_description]. Running through a for loop, it would assess the stay type of the instance and delegate each stay into its own category. Then, the measure scores for a provider for a year would be summed, and the average would be calculated. If this average was greater than a preset threshold of 20, it would be considered a positive measure or else not (marked by adding to a count). With these aggregations performed, the file would be inner-joined again to the base file.
 
-Penalties
+**Penalties**
 
 Providers incur penalties and fines depending on the nature of the deficiencies. Similar to the deficiencies, all that is needed for an investor to understand is the number of penalties a provider incurs and the dollar amount of fines a provider has incurred within a year. A for loop performs both the counting of the penalties and the summing of the fines. Lastly, the file is merged with the base file. In this instance, though, the pre-COVID-19 files did not provide enough material to use in predictive modelling, so the information was removed.
 
-Final Data Preparation
+**Final Data Preparation**
 
 With all the category files combined into one, each for both ranges, the final data preparation can be made to help better assess the provider information. The team decided it was best to create dummy variables for the following columns: 
 [ownership_type] = data was reduced to only include government, Nonprofit, and for-profit
@@ -122,6 +122,6 @@ The final step was that there were some instances that were missing, specificall
 
 Thus, the dataset is ready for categorical modeling and analysis.
 
-Diagnostics
+**Diagnostics**
 
 Prior to moving on to more complex modeling, we first assessed the overall financial performance of U.S. nursing facilities between 2015 and 2021. Standardized net income per discharge (Z-score) and average operating expense per discharge (in USD) are two important metrics that we compared in Appendix 15. According to the analysis, net income showed a rather steady rising trend through 2018, but starting in 2019, when COVID-19-related factors began to increase, it started to decrease sharply. Operating costs also showed a declining trend over the same period, most likely as a result of both operational reductions and a decrease in patient volume. The steady correlation between these two patterns implies that, particularly during and after the pandemic, financial performance has become more unpredictable and less sustainable in recent years.
