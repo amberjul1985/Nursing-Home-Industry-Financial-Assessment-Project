@@ -1,5 +1,6 @@
 **NURSING HOME INDUSTRY FINANCIAL ASSESSMENT**
-Julian Amberg, Jeffrey Brown, Diana Manukyan
+
+by Julian Amberg, Jeffrey Brown, Diana Manukyan
 
 **Executive Summary**
 
